@@ -29,8 +29,9 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
-            </main>
+            @yield('content')
+            {{ $slot ?? '' }}
+        </main>
         </div>
     </body>
 </html>

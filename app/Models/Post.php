@@ -4,11 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Auditable;
 
 class Post extends Model
 {
+    use Auditable;
     use HasFactory;
-    
+
     protected $fillable = ['user_id', 'category_id', 'title', 'content', 'views', 'published_at'];
 
     public function author()

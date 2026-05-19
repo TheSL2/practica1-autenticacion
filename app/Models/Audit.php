@@ -3,10 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Auditable;
 
-class UserRole extends Model
+class Audit extends Model
 {
-    use Auditable;
     //
 }
