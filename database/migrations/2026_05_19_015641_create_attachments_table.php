@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('post_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ¡Asegúrate de que esta línea exista!
-            $table->text('content');
+            $table->string('filename');      
+            $table->string('original_name');
+            $table->string('mime_type');    
+            $table->bigInteger('size');     
+            $table->string('path');         
             $table->timestamps();
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('attachments');
     }
 };

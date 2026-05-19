@@ -2,76 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Post;
+use App\Models\Attachment;
+use App\Services\FileService;
+use App\Http\Requests\StorePostWithAttachmentsRequest;
 use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    use AuthorizesRequests; 
+    public function store(StorePostWithAttachmentsRequest $request)
     {
-        //
+        $post = auth()->user()->posts()->create($request->safe()->except(['attachments']));
+
+        if ($request->hasFile('attachments')) {
+            $fileService = new FileService();
+            foreach ($request->file('attachments') as $file) {
+                $fileService->storeAttachment($file, $post->id);
+            }
+        }
+        return redirect()->route('posts.show', $post);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function destroy(Attachment $attachment)
     {
-        //
-    }
+        $this->authorize('delete', $attachment->post);
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(StorePostRequest $request)
-    {
-    $post = auth()->user()->posts()->create([
-    'title' => $request->title,
-    'content' => $request->content,
-    'category_id' => $request->category_id,
-    'published_at' => $request->published_at,
-    ]);
-    if ($request->has('tags')) {
-    $post->tags()->attach($request->tags);
-    }
-    return redirect()->route('posts.show', $post)
-    ->with('success', 'Post creado exitosamente');
-    }
+        $fileService = new FileService();
+        $fileService->deleteAttachment($attachment);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+        return redirect()->back()->with('success', 'Archivo eliminado');
     }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function show(Post $post)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(StorePostRequest $request, Post $post)
-    {
-    $this->authorize('update', $post); // Policy
-    $post->update($request->validated());
-    $post->tags()->sync($request->tags);
-    return redirect()->route('posts.show', $post)
-    ->with('success', 'Post actualizado');
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $post->load('attachments');
+        return view('posts.show', compact('post'));
     }
 }
