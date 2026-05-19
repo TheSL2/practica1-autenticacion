@@ -20,17 +20,16 @@ class StorePostRequest extends FormRequest
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
-    {
-        return [
-        'title' => 'required|string|min:5|max:200|unique:posts',
+    public function rules()
+{
+    return [
+        'title' => 'required|string|min:5|max:200',
         'content' => 'required|string|min:50',
         'category_id' => 'required|exists:categories,id',
-        'tags' => 'array|min:1|max:5',
+        'tags' => 'nullable|array|min:1|max:5',
         'tags.*' => 'exists:tags,id',
-        'published_at' => 'nullable|date|after:today',
     ];
-    }
+}
     public function messages()
     {
     return [

@@ -3,19 +3,22 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
-    protected $fillable = ['title', 'content', 'category_id', 'published_at', 'views'];
-
-    public function category()
-    {
-        return $this->belongsTo(Category::class);
-    }
+    use HasFactory;
+    
+    protected $fillable = ['user_id', 'category_id', 'title', 'content', 'views', 'published_at'];
 
     public function author()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function tags()
@@ -26,10 +29,5 @@ class Post extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
-    }
-
-    public function attachments()
-    {
-        return $this->hasMany(Attachment::class);
     }
 }

@@ -1,9 +1,15 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\PostController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\PostAdminController;
+use App\Http\Controllers\Admin\AuditController;
 
+Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::resource('/posts', PostAdminController::class);
+    Route::resource('/audits', AuditController::class)->only(['index', 'show']);
+});
 Route::get('/', function () {
     return view('welcome');
 });
